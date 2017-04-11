@@ -10,6 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
+from .passwords import SC2STREAMHELPER_ACCESS_TOKEN, SC2STREAMHELPER_APIKEY
+
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -121,10 +123,5 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-ACCESS_TOKEN = os.environ['SC2STREAMHELPER_ACCESS_TOKEN']
-if not ACCESS_TOKEN:
-    raise Exception('SC2STREAMHELPER_ACCESS_TOKEN was not set')
-
-API_KEY = os.environ['SC2STREAMHELPER_APIKEY']
-if not API_KEY:
-    raise Exception('SC2STREAMHELPER_APIKEY was not set')
+ACCESS_TOKEN = SC2STREAMHELPER_ACCESS_TOKEN
+API_KEY = SC2STREAMHELPER_APIKEY
