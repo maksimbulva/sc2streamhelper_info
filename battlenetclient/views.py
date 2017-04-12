@@ -3,6 +3,7 @@ from django.utils.html import escape
 from sc2streamhelper.settings import ACCESS_TOKEN, API_KEY
 from .converter import to_int
 from .ladder_parser import get_race, is_same_race
+from .models import Players
 from .regions import get_server_by_region
 from .sc2profile import sc2profile
 
@@ -49,15 +50,25 @@ def mmr(_, region, character_id, realm, character_name, race):
                 m_profile = m['legacy_link']
                 if m_profile['path'] == '/profile/' + profile.path():
                     if is_same_race(get_race(m), race):
-                        result = {
+                        return JsonResponse({
                             'rating': team_info['rating'],
                             'wins':   team_info['wins'],
                             'losses': team_info['losses'],
                             'points': team_info['points'],
-                        }
-                        return JsonResponse(result)
+                        })
 
     return HttpResponseNotFound()
+
+
+def update(_, min_ladder_id, max_ladder_id):
+    pass
+
+
+def stats(_, region):
+    return JsonResponse({
+        'players_count': Players.objects.count()
+    })
+
 
 
 def make_mmr_bad_request_response(param_name, param_value):
