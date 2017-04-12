@@ -17,6 +17,7 @@ from django.conf.urls import include, url
 from django.contrib import admin
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
+    # Admin was disabled
+    # url(r'^admin/', admin.site.urls),
     url(r'^data/(?P<region>\w+)/', include('battlenetclient.urls')),
 ]
