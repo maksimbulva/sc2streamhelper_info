@@ -1,0 +1,2 @@
+class FetchFailedException(Exception):
+    pass
