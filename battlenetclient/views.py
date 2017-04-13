@@ -55,35 +55,30 @@ def mmr(_, region, character_id, realm, character_name, race):
     return HttpResponseNotFound()
 
 
-def update(_, region, min_ladder_id, max_ladder_id):
+def update(_, region, ladder_id):
     server = get_server_by_region(region)
     if not server:
         return make_bad_request_response('region', region)
 
-    min_ladder_id = to_int(min_ladder_id)
-    max_ladder_id = to_int(max_ladder_id)
-    from_id = min(min_ladder_id, max_ladder_id)
-    to_id = max(min_ladder_id, max_ladder_id)
+    ladder_data = fetch_ladder(server, ladder_id)
+    for team_info in ladder_data['team']:
+        for m in team_info['member']:
+            m_profile = m['legacy_link']
+            key = m_profile['id']
+            if not Players.objects.filter(pk=key).exists():
+                name, _, _ = m_profile['name'].partition('#')
+                profile_path = m_profile['path']
+                if profile_path.startswith('/profile/'):
+                    profile_path = profile_path[len('/profile/'):]
 
-    for ladder_id in range(from_id, to_id + 1):
-        ladder_data = fetch_ladder(server, ladder_id)
-        for team_info in ladder_data['team']:
-            for m in team_info['member']:
-                m_profile = m['legacy_link']
-                key = m_profile['id']
-                if not Players.objects.filter(pk=key).exists():
-                    name, _, _ = m_profile['name'].partition('#')
-                    profile_path = m_profile['path']
-                    if profile_path.startswith('/profile/'):
-                        profile_path = profile_path[len('/profile/'):]
+                new_player = Players(
+                    player_id = key,
+                    display_name = name,
+                    profile_path = profile_path,
+                )
 
-                    new_player = Players(
-                        player_id = key,
-                        display_name = name,
-                        profile_path = profile_path,
-                    )
-
-                    new_player.save()
+                new_player.save()
+                
     return JsonResponse({'status': 'ok'})
 
 
