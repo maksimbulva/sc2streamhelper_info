@@ -1,3 +1,5 @@
+from .exceprions import BadParameter
+
 BNET_REGIONS = {
     'eu': 'https://eu.api.battle.net',
     'us': 'https://us.api.battle.net',
@@ -19,11 +21,11 @@ def get_server_by_region(region):
     try:
         return BNET_REGIONS[region.lower()]
     except:
-        return None
+        raise BadParameter('region', region)
 
 
 def get_region_code(region):
     try:
         return BNET_REGION_CODES[region.lower()]
     except:
-        return None
+        raise BadParameter('region', region)
