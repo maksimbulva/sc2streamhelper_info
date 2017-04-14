@@ -5,7 +5,7 @@ from .converter import to_int
 from .ladder_parser import get_race, is_same_race
 from .ladders import fetch_ladder
 from .models import Players
-from .regions import get_server_by_region
+from .regions import get_region_code, get_server_by_region
 from .sc2profile import sc2profile
 
 import requests
@@ -57,29 +57,48 @@ def mmr(_, region, character_id, realm, character_name, race):
 
 def update(_, region, ladder_id):
     server = get_server_by_region(region)
-    if not server:
+    region_code = get_region_code(region)
+    if (not server) or (region_code is None):
         return make_bad_request_response('region', region)
+
+    # Counters to be sent back in JSON
+    players_fetched_count = 0
+    new_players_count = 0
 
     ladder_data = fetch_ladder(server, ladder_id)
     for team_info in ladder_data['team']:
         for m in team_info['member']:
+            players_fetched_count += 1
             m_profile = m['legacy_link']
             key = m_profile['id']
-            if not Players.objects.filter(pk=key).exists():
-                name, _, _ = m_profile['name'].partition('#')
-                profile_path = m_profile['path']
-                if profile_path.startswith('/profile/'):
-                    profile_path = profile_path[len('/profile/'):]
+            name, _, _ = m_profile['name'].partition('#')
 
-                new_player = Players(
-                    player_id = key,
-                    display_name = name,
-                    profile_path = profile_path,
+            profile_path = m_profile['path']
+            if profile_path.startswith('/profile/'):
+                profile_path = profile_path[len('/profile/'):]
+
+            player = Players.objects.filter(pk=key).first()
+            if player is None:
+                # Create the new player
+                new_players_count += 1
+                player = Players(
+                    player_id=key,
+                    region_code=region_code,
+                    display_name=name,
+                    profile_path=profile_path,
                 )
+            else:
+                # Update the current player record
+                player.region_code = region_code
+                player.display_name = name
+                player.profile_path = profile_path
 
-                new_player.save()
-                
-    return JsonResponse({'status': 'ok'})
+            player.save()
+
+    return JsonResponse({
+            'players_fetched_count': players_fetched_count,
+            'new_players_count': new_players_count,
+        })
 
 
 def stats(_, region):
