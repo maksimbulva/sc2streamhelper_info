@@ -138,9 +138,10 @@ def get_mmr(server, region_code, profile_path, player_id, realm, race):
                                 .filter(region_code=region_code)\
                                 .first()
 
-    result = find_mmr_in_ladder(ladder_by_player_record.ladder_id, server, profile_path, race)
-    if result is not None:
-        return result
+    if ladder_by_player_record is not None:
+        result = find_mmr_in_ladder(ladder_by_player_record.ladder_id, server, profile_path, race)
+        if result is not None:
+            return result
 
     url = server + '/sc2/profile/' + profile_path + '/ladders?apikey=' + API_KEY
     r = requests.get(url)
