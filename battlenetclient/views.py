@@ -113,9 +113,10 @@ def update(_, region, ladder_id):
     })
 
 
-def stats(_, region):
+def stats(_):
     return JsonResponse({
-        'players_count': Players.objects.count()
+        'players_count': Players.objects.count(),
+        'ladder_ids_cached': LaddersByPlayers.objects.count(),
     })
 
 

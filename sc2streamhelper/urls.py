@@ -14,10 +14,13 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 from django.conf.urls import include, url
-from django.contrib import admin
+# from django.contrib import admin
+from battlenetclient.views import stats
 
 urlpatterns = [
     # Admin was disabled
     # url(r'^admin/', admin.site.urls),
     url(r'^data/(?P<region>\w+)/', include('battlenetclient.urls')),
+    # This uri has no region parameter
+    url(r'^data/stats/', stats, name='stats'),
 ]
