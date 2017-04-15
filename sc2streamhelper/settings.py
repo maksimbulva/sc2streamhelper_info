@@ -10,7 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
-from .passwords import SC2STREAMHELPER_ACCESS_TOKEN, SC2STREAMHELPER_APIKEY
+from .passwords import SC2STREAMHELPER_APITOKEN, SC2STREAMHELPER_APIKEY
 
 import os
 
@@ -124,5 +124,5 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-ACCESS_TOKEN = SC2STREAMHELPER_ACCESS_TOKEN
 API_KEY = SC2STREAMHELPER_APIKEY
+ACCESS_TOKEN = SC2STREAMHELPER_APITOKEN

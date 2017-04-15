@@ -88,3 +88,6 @@ ENV/
 # Rope project settings
 .ropeproject
 sc2streamhelper/passwords.py
+db.sqlite3
+.idea/
+battlenetclient/migratios/
