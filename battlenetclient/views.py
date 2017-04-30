@@ -14,6 +14,37 @@ import requests
 
 # Create your views here.
 
+def profile(_, region, character_id, realm, character_name):
+    try:
+        server = get_server_by_region(region)
+        p = sc2profile(to_int(character_id), to_int(realm),
+                             character_name)
+        url = server + '/sc2/profile/' + p.path() + '/?apikey=' + API_KEY
+        r = requests.get(url)
+
+        if r.status_code != requests.codes.ok:
+            raise BnetRequestFailed(r.status_code)
+
+        data = r.json()
+
+        return JsonResponse({
+            'id': data['id'],
+            'realm': data['realm'],
+            'displayName': data['displayName'],
+            'clanName': data['clanName'],
+            'clanTag': data['clanTag'],
+            'profilePath': data['profilePath'],
+        })
+
+    except BadParameter as e:
+        return make_bad_request_response(e.parameter_name,
+                                         e.parameter_value)
+    except BnetRequestFailed as e:
+        return make_bnet_request_failed_response(e.request_status_code)
+
+    return HttpResponseNotFound()
+
+
 def mmr(_, region, character_id, realm, character_name, race):
     try:
         server = get_server_by_region(region)
