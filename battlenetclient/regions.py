@@ -5,7 +5,7 @@ BNET_REGIONS = {
     'us': 'https://us.api.battle.net',
     'sea': 'https://sea.api.battle.net',
     'kr': 'https://kr.api.battle.net',
-    'cn': 'https://battlenet.com.cn'
+    'cn': 'https://api.battlenet.com.cn'
 }
 
 BNET_REGION_CODES = {
