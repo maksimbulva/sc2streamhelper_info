@@ -1,6 +1,7 @@
 from django.http import HttpResponseNotFound, HttpResponseBadRequest, JsonResponse
 from django.utils.html import escape
 from sc2streamhelper.settings import API_KEY
+from .client_version import ACTUAL_CLIENT_VERSION
 from .converter import to_int
 from .exceprions import BadParameter, BnetRequestFailed
 from .ladder_parser import get_race, is_same_race, validate_race
@@ -149,6 +150,10 @@ def stats(_):
         'players_count': Players.objects.count(),
         'ladder_ids_cached': LaddersByPlayers.objects.count(),
     })
+
+
+def client_version(_, region):
+    return JsonResponse({'version': ACTUAL_CLIENT_VERSION})
 
 
 def make_bad_request_response(param_name, param_value):
